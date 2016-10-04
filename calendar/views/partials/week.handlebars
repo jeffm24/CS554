@@ -1,0 +1,11 @@
+<div class="week">
+    {{#each (getDays month year week)}}
+        {{#if date}}
+            <a href="/{{month}}/{{date}}/{{year}}" id="{{month}}-{{date}}-{{year}}" class="day">
+                <span class="extra-date-info">{{day}}, {{getMonthName month}} </span> {{date}}
+            </a>
+        {{else}}
+            <div class="day filler"></div>
+        {{/if}}
+    {{/each}}
+</div>

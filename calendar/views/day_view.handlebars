@@ -1,0 +1,30 @@
+<section id="day-info">
+    <div id="left-panel" data-dateid="{{month}}-{{date}}-{{year}}">
+        <h1>Events for {{getDay month date year}}, {{getMonthName month}} {{date}}</h1>
+        <div id="events"></div>
+        <p>
+            <a href="/add_event/{{month}}/{{year}}?date={{date}}" id="add-event" class="btn">Add Event</a>
+            <a href="/{{month}}/{{year}}" id="home-btn" class="btn">Home</a>
+        </p>
+    </div>
+    <div id="right-panel">
+        <p>This Thursday is the {{getThisThurs month date year}}<sup>th</sup> day of the year.</p>
+        <p>There are {{getRemainingDays month date year}} days left in {{year}}.</p>
+    </div>
+</section>
+
+<section id="days">
+    <a href="{{getPrevDay month date year}}" id="prev" class="btn">&#x25C0; <span class="sr-text">Previous Day</span></a>
+    {{#each (getNearbyDays month date year)}}
+        {{#unless current}}
+            <a href="/{{month}}/{{date}}/{{year}}" class="day">
+                <span class="sr-text">Go to date</span> {{getMonthNum month}}/{{date}}<span class="extra-date-info">/{{year}}</span>
+            </a>
+        {{else}}
+            <a id="current" class="day">
+                 <span class="sr-text">Current date</span> {{getMonthNum month}}/{{date}}<span class="extra-date-info">/{{year}}</span>
+            </a>
+        {{/unless}}
+    {{/each}}
+    <a href="{{getNextDay month date year}}" id="next" class="btn"><span class="sr-text">Next Day</span> &#x25B6;</a>
+</section>

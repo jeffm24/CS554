@@ -1,0 +1,110 @@
+$medium-size: 400px;
+$large-size: 1000px;
+
+$text-color-light: darken(white, 5);
+$text-color-dark: lighten(black, 5);
+$border-color: transparentize(white, 0.6);
+
+$page-bg: #2b82bc;
+$alt-bg-darker: darken($page-bg, 10);
+$alt-bg-darkest: darken($page-bg, 15);
+
+
+html, body {
+    height: 100%;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: ariel, sans-serif;
+    background-color: $page-bg;
+    color: $text-color-light;
+    margin: 0px;
+    padding: 0px;
+
+    * {
+        box-sizing: border-box;
+    }
+}
+
+.container {
+    max-width: $large-size;
+    margin: 0px auto;
+}
+
+.btn {
+    background-color: $alt-bg-darker;
+    border: 1px solid $border-color;
+    padding: 8px 10px;
+    font-size: 1rem;
+    color: $text-color-light;
+    box-shadow: 0px 1px 1px transparentize(black, 0.5);
+    cursor: pointer;
+    text-decoration: none;
+    border-radius: 1px;
+
+    &:hover {
+        background-color: $border-color;
+        color: $text-color-dark;
+    }
+
+    &:active {
+        background-color: $alt-bg-darker;
+        color: $text-color-light;
+    }
+}
+
+.form {
+    padding: 30px 10px;
+
+    fieldset {
+        border: none;
+
+        legend {
+            text-shadow: 0px 1px 1px transparentize(black, 0.5);
+
+            input {
+                width: 2.5rem;
+                vertical-align: text-top;
+                height: 1.8rem;
+            }
+        }
+
+        .form-control {
+            width: 100%;
+            min-height: 1.8rem;
+            padding: 5px;
+            border-radius: 1px;
+        }
+    }
+}
+
+.alert {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0px;
+    border-radius: 1px;
+    background-color: transparentize(grey, 0.5);
+    border: 1px solid transparentize(grey, 0.2);
+    display: none;
+    text-shadow: 0px 1px 1px transparentize(black, 0.5);
+
+    &.alert-danger {
+        background-color: transparentize(#ff6666, 0.5);
+        border: 1px solid transparentize(#ff6666, 0.2);
+    }
+
+    &.alert-info {
+        background-color: transparentize(lightblue, 0.5);
+        border: 1px solid transparentize(lightblue, 0.2);
+    }
+
+    &.alert-success {
+        background-color: transparentize(lightgreen, 0.5);
+        border: 1px solid transparentize(lightgreen, 0.2);
+    }
+}
+
+.sr-text {
+    display: none;
+}

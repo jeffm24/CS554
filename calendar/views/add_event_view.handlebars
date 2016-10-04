@@ -1,0 +1,22 @@
+<form class="form" id="new-event-form" data-month="{{month}}" data-year="{{year}}">
+    <fieldset>
+        <legend><h1>New Event for {{getMonthName month}} <input type="number" id="date" name="date" value="{{#if date}}{{date}}{{else}}1{{/if}}" min="1" max="{{getLastDate month year}}" />, {{year}}</h1></legend>
+        <p>
+            <label for="title">Title</label><br/>
+            <input type="text" id="title" class="form-control" name="title" placeholder="e.g. Bob's Birthday" />
+        </p>
+        <p>
+            <label for="location">Location</label><br/>
+            <input type="text" id="location" class="form-control" name="location" placeholder="e.g. Bob's House" />
+        </p>
+        <p>
+            <label for="description">Description</label><br/>
+            <textarea id="description" class="form-control" name="description" placeholder="e.g. Party at Bob's place!"></textarea>
+        </p>
+        <p>
+            <div class="alert alert-danger"></div>
+            <button type="submit" class="btn">Submit</button>
+            <a href="/{{month}}/{{year}}" id="home-btn" class="btn">Home</a>
+        </p>
+    </fieldset>
+</form>

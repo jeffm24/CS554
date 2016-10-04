@@ -1,0 +1,21 @@
+<div class="month"> 
+    <h1 id="month-name">
+        <a href="{{getPrevMonth month year}}" id="prev">&#x25C0; <span class="sr-text">Previous Month</span></a> {{getMonthName month}}, {{year}} <a href="{{getNextMonth month year}}" id="next"><span class="sr-text">Next Month</span> &#x25B6;</a>
+        <a href="/add_event/{{month}}/{{year}}" id="add-event" class="btn">Add Event</a>
+    </h1>
+    <div class="week header">
+        <div class="day header">Sun</div>
+        <div class="day header">Mon</div>
+        <div class="day header">Tue</div>
+        <div class="day header">Wed</div>
+        <div class="day header">Thu</div>
+        <div class="day header">Fri</div>
+        <div class="day header">Sat</div>
+    </div>
+    {{> week month=month year=year week=0}}
+    {{> week month=month year=year week=1}}
+    {{> week month=month year=year week=2}}
+    {{> week month=month year=year week=3}}
+    {{> week month=month year=year week=4}}
+    {{> week month=month year=year week=5}}
+</div>
