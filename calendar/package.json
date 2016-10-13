@@ -36,7 +36,6 @@
     "express": "^4.14.0",
     "express-handlebars": "^3.0.0",
     "handlebars": "^4.0.5",
-    "jquery": "^3.1.1",
     "mongodb": "^2.2.10",
     "node-uuid": "^1.4.7",
     "xss": "^0.2.13"

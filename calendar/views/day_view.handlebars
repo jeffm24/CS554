@@ -1,6 +1,8 @@
 <section id="day-info">
     <div id="left-panel" data-dateid="{{month}}-{{date}}-{{year}}">
-        <h1>Events for {{getDay month date year}}, {{getMonthName month}} {{date}}</h1>
+        <div class="page-header">
+            <h1>Events for {{getDay month date year}}, {{getMonthName month}} {{date}}</h1>
+        </div>
         <div id="events"></div>
         <p>
             <a href="/add_event/{{month}}/{{year}}?date={{date}}" id="add-event" class="btn">Add Event</a>

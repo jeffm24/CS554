@@ -3,7 +3,7 @@ const fullMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'Jul
 const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const fullDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-const eventData = require(process.env.PWD + '/data/eventData.js');
+const eventData = require('../data/eventData.js');
 
 const constructorMethod = (app) => {
     app.get("/", (req, res) => {
@@ -28,6 +28,16 @@ const constructorMethod = (app) => {
                     return lastDay.getDate();
                 }
             }
+        });
+    });
+
+    app.get("/:month/:date/:year/:eventId", (req, res) => {
+        res.render("event_view", {
+            month: req.params.month, 
+            date: req.params.date, 
+            year: req.params.year, 
+            eventId: req.params.eventId,
+            pageTitle: "Jeff Mariconda"
         });
     });
 
@@ -122,6 +132,8 @@ const constructorMethod = (app) => {
                         {day: 'Fri', month: month, year: year}, 
                         {day: 'Sat', month: month, year: year}
                     ];
+
+                    var now = new Date();
                     
                     // get the first day of the month to start
                     var currDay = new Date(year, month, 1);
@@ -147,6 +159,11 @@ const constructorMethod = (app) => {
                         // get date info
                         if (i == currDay.getDay()) {
                             days[i].date = currDay.getDate();
+
+                            // If currDay is the actual current date, set current to true
+                            if (currDay.getMonth() === now.getMonth() && currDay.getDate() === now.getDate() && currDay.getFullYear() === now.getFullYear()) {
+                                days[i].current = true;
+                            }
                             
                             currDay.setDate(++currDate);
                         }

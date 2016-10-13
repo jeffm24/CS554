@@ -1,7 +1,4 @@
 (function() {
-    const $ = require(process.env.PWD + '/public/js/jquery-3.1.1.min.js');
-    const eventData = require(process.env.PWD + '/data/eventData.js');
-
     $(document).ready(function() {
         $('#new-event-form').submit(function(e) {
             e.preventDefault();

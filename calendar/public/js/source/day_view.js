@@ -1,21 +1,27 @@
-(function() {
-    const $ = require(process.env.PWD + '/public/js/jquery-3.1.1.min.js');
-    const eventData = require(process.env.PWD + '/data/eventData.js');
+(function () {
+    $(document).ready(function () {
+        var dateId = $('#left-panel').data('dateid');
 
-    $(document).ready(function() {
-        eventData.getEvents().then(function(events) {
-            var dayEvents = events[$('#left-panel').data('dateid')];
+        if (dateId) {
+            eventData.getEvents().then(function (events) {
 
-            // Fill in events the current day
-            var html = '<ul class="events">';
+                var dayEvents = events[dateId];
 
-            for (let event of dayEvents) {
-                html += '<li>' + event.title + '</li>';
-            }
+                var month = +dateId.substring(0, dateId.indexOf('-'));
+                var date = +dateId.substring(dateId.indexOf('-') + 1, dateId.lastIndexOf('-'));
+                var year = +dateId.substring(dateId.lastIndexOf('-') + 1, dateId.length);
 
-            html += '</ul>'
+                // Fill in events the current day
+                var html = '<ul class="events">';
 
-            $('#events').html(html);
-        });
+                for (let event of dayEvents) {
+                    html += '<li><a href="/' + month + '/' + date + '/' + year + '/' + event.id + '">' + event.title + '</a></li>';
+                }
+
+                html += '</ul>'
+
+                $('#events').html(html);
+            });
+        }
     });
 })();

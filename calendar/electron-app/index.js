@@ -1,4 +1,6 @@
 const electron = require("electron");
+const {dialog} = require("electron");
+const eventData = require("../data/eventData.js");
 
 let mainWindow;
 
@@ -15,12 +17,12 @@ const constructorMethod = () => {
 
     function createWindow() {
         // Create the browser window.
-        mainWindow = new BrowserWindow({ width: 1024, height: 768 });
+        mainWindow = new BrowserWindow({ width: 1200, height: 900, minWidth: 400 });
 
         mainWindow.loadURL('http://localhost:3000/');
 
         // Open the DevTools.
-        mainWindow.webContents.openDevTools({mode: "undocked"});
+        //mainWindow.webContents.openDevTools({ mode: "undocked" });
 
         // Emitted when the window is closed.
         mainWindow.on('closed', function () {
@@ -31,10 +33,101 @@ const constructorMethod = () => {
         });
     }
 
+    const Menu = electron.Menu;
+
+    function createMenu() {
+        Menu.setApplicationMenu(Menu.buildFromTemplate([
+            {
+                label: 'File',
+                submenu: [
+                    {
+                        label: 'Save Calendar',
+                        accelerator: 'CmdOrCtrl+S',
+                        click(item, focusedWindow) {
+                            var options = {
+                                buttonLabel: 'Save Calendar',
+                                filters: [{ name: 'JSON', extensions: ['json'] }]
+                            };
+
+                            // Display save dialog box to save the current calendar
+                            dialog.showSaveDialog(mainWindow, options, function (filePath) {
+                                if (filePath === undefined) {
+                                    return;
+                                }
+
+                                eventData.saveCalendar(filePath).then(function(result) {
+                                    dialog.showMessageBox(mainWindow, {type: 'info', buttons: [], title: 'Success!', message: 'Calendar saved!'});
+                                }, function(error) {
+                                    dialog.showErrorBox('Error', error);
+                                });
+                            });
+                        }
+                    },
+                    {
+                        label: 'Load Calendar',
+                        accelerator: 'CmdOrCtrl+O',
+                        click(item, focusedWindow) {
+                            var options = {
+                                buttonLabel: 'Load Calendar',
+                                filters: [{ name: 'JSON', extensions: ['json'] }],
+                                properties: ['openFile']
+                            };
+
+                            dialog.showOpenDialog(mainWindow, options, function (filePaths) {
+                                if (filePaths === undefined) {
+                                    return;
+                                }
+                                
+                                eventData.loadCalendar(filePaths[0]).then(function(result) {
+                                    dialog.showMessageBox(mainWindow, {type: 'info', buttons: [], title: 'Success!', message: 'Calendar loaded!'});
+                                    mainWindow.loadURL('http://localhost:3000/');
+                                }, function(error) {
+                                    dialog.showErrorBox('Error', error);
+                                });
+                            });
+                        }
+                    }
+                ]
+            },
+            {
+                label: 'Modes',
+                submenu: [
+                    {
+                        label: 'Change to Tablet',
+                        click(item, focusedWindow) {
+                            var height = mainWindow.getSize()[1];
+
+                            mainWindow.setSize(700, height);
+                        }
+                    },
+                    {
+                        label: 'Change to Desktop',
+                        click(item, focusedWindow) {
+                            var height = mainWindow.getSize()[1];
+
+                            mainWindow.setSize(1200, height);
+                        }
+                    },
+                    {
+                        label: 'Change to Mobile View',
+                        click(item, focusedWindow) {
+                            var height = mainWindow.getSize()[1];
+
+                            mainWindow.setSize(400, height);
+                        }
+                    }
+                ]
+            }
+        ]));
+    }
+
     // This method will be called when Electron has finished
     // initialization and is ready to create browser windows.
     // Some APIs can only be used after this event occurs.
-    app.on('ready', createWindow);
+    app.on('ready', function () {
+        createWindow();
+        createMenu();
+    });
 
     // Quit when all windows are closed.
     app.on('window-all-closed', function () {

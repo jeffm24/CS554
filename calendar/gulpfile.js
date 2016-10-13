@@ -14,6 +14,13 @@ const handlebarsFiles = "./views/**/*.handlebars";
 
 gulp.task("scripts", () => {
     gulp.src([jsFiles])
+        .pipe(order([
+            "main.js",
+            "month_view.js",
+            "day_view.js",
+            "add_event_view.js",
+            "event_view.js"
+        ]))
         .pipe(concatenate("scripts.min.js"))
         //.pipe(uglify())
         .pipe(gulp.dest("./public/js/"))

@@ -30,6 +30,11 @@ body {
 .container {
     max-width: $large-size;
     margin: 0px auto;
+    padding: 10px;
+
+    @media screen and (max-width: $medium-size) {
+        padding: 0px;
+    }
 }
 
 .btn {
@@ -55,13 +60,12 @@ body {
 }
 
 .form {
-    padding: 30px 10px;
+    padding: 20px 10px;
 
     fieldset {
         border: none;
 
         legend {
-            text-shadow: 0px 1px 1px transparentize(black, 0.5);
 
             input {
                 width: 2.5rem;
@@ -107,4 +111,16 @@ body {
 
 .sr-text {
     display: none;
+}
+
+.page-header {
+    border-bottom: 2px solid $text-color-light;
+    padding: 0px;
+}
+
+@for $i from 0 through 5 {
+    h#{$i} {
+        text-shadow: 0px 1px 1px transparentize(black, 0.5);
+        font-size: 2.3rem - ($i * 0.3rem) !important;
+    }
 }

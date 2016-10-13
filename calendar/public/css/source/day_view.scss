@@ -11,10 +11,7 @@
             }
         }
 
-        h1 {
-            font-size: 2rem;
-            padding-bottom: 20px;
-            border-bottom: 2px solid $text-color-light;
+        .page-header {
             width: 70%;
 
             @media screen and (max-width: $medium-size) {
@@ -26,15 +23,16 @@
     #right-panel {
         width: 25%;
         border-left: 2px solid $text-color-light;
+        padding-left: 15px;
 
         @media screen and (max-width: $medium-size) {
             border-left: none;
             border-top: 2px solid $text-color-light;
+            padding: inital;
         }
     }
 
     #left-panel, #right-panel {
-        padding: 10px 20px;
         float: left;
         font-size: 1.5rem;
 
@@ -80,7 +78,7 @@
 
         &#current {
             font-weight: bold;
-            border: 1px solid $text-color-dark;
+            box-shadow: inset 0px 0px 5px 0px transparentize(black, 0.25);
         }
 
         @media screen and (max-width: $medium-size) {

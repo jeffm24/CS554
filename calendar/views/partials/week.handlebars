@@ -1,7 +1,7 @@
 <div class="week">
     {{#each (getDays month year week)}}
         {{#if date}}
-            <a href="/{{month}}/{{date}}/{{year}}" id="{{month}}-{{date}}-{{year}}" class="day">
+            <a href="/{{month}}/{{date}}/{{year}}" id="{{month}}-{{date}}-{{year}}" class="day {{#if current}}current{{/if}}">
                 <span class="extra-date-info">{{day}}, {{getMonthName month}} </span> {{date}}
             </a>
         {{else}}
