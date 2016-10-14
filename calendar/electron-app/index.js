@@ -41,6 +41,31 @@ const constructorMethod = () => {
                 label: 'File',
                 submenu: [
                     {
+                        label: 'New Calendar',
+                        accelerator: 'CmdOrCtrl+N',
+                        click(item, focusedWindow) {
+                            var options = {
+                                type: 'warning', 
+                                buttons: ['No', 'Yes'], 
+                                title: 'Create New Calendar?', 
+                                message: 'Are you sure you want to create a new calendar?',
+                                detail: 'This will clear out all events from the current calendar.'
+                            };
+
+                            // Show message to confirm and clear the calendar if confirmed
+                            dialog.showMessageBox(mainWindow, options, function(choice) {
+                                if (choice === 1) {
+                                    eventData.clearCalendar().then(function (result) {
+                                        dialog.showMessageBox(mainWindow, {type: 'info', buttons: [], title: 'Success!', message: 'New calendar created!'});
+                                        mainWindow.loadURL('http://localhost:3000/');
+                                    }, function (error) {
+                                        dialog.showErrorBox('Error', error);
+                                    });
+                                }
+                            });                                
+                        }
+                    },
+                    {
                         label: 'Save Calendar',
                         accelerator: 'CmdOrCtrl+S',
                         click(item, focusedWindow) {
@@ -73,6 +98,7 @@ const constructorMethod = () => {
                                 properties: ['openFile']
                             };
 
+                            // Display open dialog box to load a saved calendar
                             dialog.showOpenDialog(mainWindow, options, function (filePaths) {
                                 if (filePaths === undefined) {
                                     return;

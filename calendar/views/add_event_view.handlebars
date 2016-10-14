@@ -1,6 +1,6 @@
 <form class="form" id="new-event-form" data-month="{{month}}" data-year="{{year}}">
     <fieldset>
-        <legend><h1>New Event for {{getMonthName month}} <input type="number" id="date" name="date" value="{{#if date}}{{date}}{{else}}1{{/if}}" min="1" max="{{getLastDate month year}}" />, {{year}}</h1></legend>
+        <legend><h1>New Event for {{getMonthName month}} <input type="number" id="date" name="date" value="{{#if date}}{{date}}{{else}}1{{/if}}" />, {{year}}</h1></legend>
         <p>
             <label for="title">Title</label><br/>
             <input type="text" id="title" class="form-control" name="title" placeholder="e.g. Bob's Birthday" />

@@ -27,6 +27,18 @@ body {
     }
 }
 
+a, a:visited {
+    text-decoration: none;
+    color: darken($page-bg, 35%);
+}
+a:hover {
+    color: lighten($page-bg, 40%);
+    text-shadow: 0px 1px 1px transparentize(black, 0.2);
+}
+a:active {
+    color: lighten($page-bg, 60%);
+}
+
 .container {
     max-width: $large-size;
     margin: 0px auto;

@@ -15,12 +15,14 @@
                 return obj;
             }, {});
 
-            var month = +$(e.target).data('month');
-            var year = +$(e.target).data('year');
-            var date = +data.date;
+            var dateData = {
+                month: +$(e.target).data('month'),
+                year: +$(e.target).data('year'),
+                date: +data.date
+            };
 
             try {
-                eventData.addEvent(new Date(year, month, date), data).then(function(ret) {
+                eventData.addEvent(dateData, data).then(function(ret) {
                     window.location = $('#home-btn').attr('href');
                 });
             } catch (e) {

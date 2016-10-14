@@ -21,11 +21,6 @@ const constructorMethod = (app) => {
             helpers: {
                 getMonthName: function(monthNum) {
                     return months[monthNum];
-                },
-                getLastDate: function(monthNum, year) {
-                    var lastDay = new Date(year, monthNum + 1, 0);
-
-                    return lastDay.getDate();
                 }
             }
         });

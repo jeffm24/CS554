@@ -15,11 +15,7 @@ const handlebarsFiles = "./views/**/*.handlebars";
 gulp.task("scripts", () => {
     gulp.src([jsFiles])
         .pipe(order([
-            "main.js",
-            "month_view.js",
-            "day_view.js",
-            "add_event_view.js",
-            "event_view.js"
+            "main.js"
         ]))
         .pipe(concatenate("scripts.min.js"))
         //.pipe(uglify())
@@ -30,9 +26,7 @@ gulp.task("scripts", () => {
 gulp.task("sass", () => {
     gulp.src(sassFiles)
         .pipe(order([
-            "main.scss",
-            "month_view.scss",
-            "day_view.scss"
+            "main.scss"
         ]))
         .pipe(concatenate("styles.scss"))
         .pipe(gulpSASS())
