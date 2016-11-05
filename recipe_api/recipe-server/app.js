@@ -1,8 +1,5 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-const redis = require('redis');
 const sha256 = require('sha256');
 const bcrypt = require('bcrypt-then');
 const app = express();
@@ -48,55 +45,6 @@ app.use("/public", static);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(rewriteUnsupportedBrowserMethods);
-app.use(passport.initialize());
-
-passport.serializeUser(function(user, done) {
-    done(null, user);
-});
-
-passport.deserializeUser(function(obj, done) {
-    done(null, obj);
-});
-
-passport.use(new LocalStrategy({ usernameField: 'username', passwordField: 'password', passReqToCallback: true, session: false },
-    function(req, username, password, done) {
-        
-        var client = redis.createClient();
-        var authToken = req.get('Auth-Token');
-
-        client.hgetall('users', (err, users) => {
-            client.quit();
-
-            if (err) {
-                return done(err);
-            } 
-
-            var userId = sha256(username);
-
-            // Check Username
-            if (!users[userId]) {
-                return done(null, false, { message: 'Invalid username.' });
-            }
-
-            var user = JSON.parse(users[userId]);
-
-            // Check auth-token
-            if (authToken !== user.token) {
-                return done(null, false, { message: 'Invalid auth-token.' });
-            }
-
-            // Check password
-            return bcrypt.compare(password, user.password).then((valid) => {
-                if (!valid) {
-                    return done(null, false, { message: 'Incorrect password.' });
-                }
-
-                return done(null, user);
-            });
-        });
-    }
-));
-
 
 app.engine('handlebars', handlebarsInstance.engine);
 app.set('view engine', 'handlebars');

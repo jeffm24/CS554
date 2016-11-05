@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const recipeData = require("../../recipe-data");
 const uuid = require("node-uuid");
-const passport = require('passport');
+const authenticate = require('../auth').authenticate;
 
 router.get("/", (req, res) => {
     recipeData
@@ -16,7 +16,7 @@ router.get("/", (req, res) => {
         });
 });
 
-router.post("/", (req, res) => {
+router.post("/", authenticate, (req, res) => {
     let newRecipe = req.body.recipe;
 
     let redisConnection = req
