@@ -37,7 +37,7 @@ redisConnection.on('create-recipe:*', (data, channel) => {
 
                                 let recipeListExceptCurrent = recipeList.filter(x => x._id !== newRecipe._id);
 
-                                console.log(recipeListExceptCurrent);
+                                //console.log(recipeListExceptCurrent);
                                 // Perform logic here Go through entire recipe list Calculate the percentage
                                 // matched for each. Compose an array of data calls to setup the percentage
                                 // matched Add all, then resolve to recipeWithUrls
@@ -100,7 +100,7 @@ redisConnection.on('delete-recipe:*', (data, channel) => {
     recipeData
         .deleteRecipe(data.userId, data.recipeId)
         .then((ok) => {
-            redisConnection.emit(`recipe-deleted:${messageId}`, ok);
+            redisConnection.emit(`recipe-deleted:${messageId}`, data.recipeId);
         }).catch(error => {
             redisConnection.emit(`recipe-delete-failed:${messageId}`, error);
         });

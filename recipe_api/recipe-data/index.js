@@ -84,7 +84,6 @@ let exportedMethods = {
         });
     },
     addRecipe(recipe) {       
-        console.log(recipe); 
         if (!ajv.validate(recipeSchema, recipe)) {
             return Promise.reject({ status: 400, error: new TypeError('Invalid Arguments.') });
         }
@@ -107,6 +106,8 @@ let exportedMethods = {
         if (!ajv.validate({type: 'string'}, recipeId) || !ajv.validate(updateRecipeSchema, newRecipeFields)) {
             return Promise.reject({ status: 400, error: new TypeError('Invalid Arguments.') });
         }
+
+        console.log(newRecipeFields);
 
         var collection;
 

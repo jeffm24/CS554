@@ -14,8 +14,13 @@ function checkRecentRecipes(req, res, next) {
     client.lrange('recentRecipes', 0, 10, (err, recipes) => {
         client.quit();
 
+        console.log(recipes);
+
         if (err) {
             res.status(500).send({error: err});
+            return;
+        } else if (!recipes) {
+            next();
             return;
         }
 
@@ -36,51 +41,60 @@ function checkRecentRecipes(req, res, next) {
     });
 }
 
-router.get("/:id", checkRecentRecipes, (req, res) => {
-    recipeData
-        .getRecipe(req.params.id)
-        .then((recipe) => {
-            if (!recipe) {
-                res.json({});
-            }
-
-            var client = redis.createClient(),
-                multi = client.multi();
-
-            multi.rpush('recentRecipes', JSON.stringify(recipe));
-            multi.llen('recentRecipes');
-
-            multi.exec((err, results) => {
-                if (err) {
-                    client.quit();
-                    res.status(500).json(err);
+router.get("/:id", 
+    checkRecentRecipes, 
+    function (req, res, next) {
+        res.express_redis_cache_name = `recipe${req.params.id}Data`;
+        next();
+    },
+    cache.route(60 * 60),
+    (req, res) => {
+        recipeData
+            .getRecipe(req.params.id)
+            .then((recipe) => {
+                if (!recipe) {
+                    res.json({});
                     return;
                 }
 
-                // Check if length of the cached recipe list is greater than 10 and pop the last recipe off if it is
-                if (results[1] > 10) {
-                    client.rpop('recentRecipes', (err, recipe) => {
+                var client = redis.createClient(),
+                    multi = client.multi();
+
+                multi.rpush('recentRecipes', JSON.stringify(recipe));
+                multi.llen('recentRecipes');
+
+                multi.exec((err, results) => {
+                    if (err) {
+                        client.quit();
+                        res.status(500).json(err);
+                        return;
+                    }
+
+                    // Check if length of the cached recipe list is greater than 10 and pop the last recipe off if it is
+                    if (results[1] > 10) {
+                        client.rpop('recentRecipes', (err, recipe) => {
+                            client.quit();
+
+                            if (err) {
+                                res.status(500).json(err);
+                                return;
+                            }
+
+                            res.json(recipe);
+                        });
+                    } else {
                         client.quit();
 
-                        if (err) {
-                            res.status(500).json(err);
-                            return;
-                        }
-
                         res.json(recipe);
-                    });
-                } else {
-                    client.quit();
-
-                    res.json(recipe);
-                }
-            });                
-        })
-        .catch(() => {
-            // Something went wrong with the server!
-            res.sendStatus(500);
-        });
-});
+                    }
+                });                
+            })
+            .catch(() => {
+                // Something went wrong with the server!
+                res.sendStatus(500);
+            });
+    }
+);
 
 router.get("/",
     // middleware to define cache name 
@@ -125,21 +139,34 @@ router.post("/",
             clearTimeout(killswitchTimeoutId);
 
             // Cache the new recipe for an hour
-            var client = redis.createClient(),
-                multi = client.multi(),
-                cacheName = `recipe${insertedRecipe._id}Data`;
+            var cacheName = `recipe${insertedRecipe._id}Data`;
 
-            multi.set(cacheName, JSON.stringify(insertedRecipe));
-            multi.expire(cacheName, (60 * 60));
-
-            multi.exec((err, results) => {
-                client.quit();
-
+            cache.add(cacheName, JSON.stringify(insertedRecipe), { expire: 60 * 60, type: 'json' }, (err, added) => {
                 if (err) {
                     res.status(500).json(err);
+                    return;
                 }
 
-                res.json(insertedRecipe);
+                // Update the recipes list cache
+                cache.get('recipesData', (err, results) => {
+                    var setRecipes;
+                    
+                    if (results.length) {
+                        setRecipes = JSON.parse(results[0].body);
+                        setRecipes.push(insertedRecipe);
+                    } else {
+                        setRecipes = [insertedRecipe];
+                    }
+
+                    cache.add('recipesData', JSON.stringify(setRecipes), { expire: 60 * 60, type: 'json' }, (err, added) => {
+                        if (err) {
+                            res.status(500).send(err);
+                            return;
+                        }
+
+                        res.json(insertedRecipe);
+                    });    
+                });
             });
         });
 
@@ -182,21 +209,36 @@ router.put("/:id", authenticate, (req, res) => {
         clearTimeout(killswitchTimeoutId);
 
         // Cache (or re-cache) the updated recipe for an hour
-        var client = redis.createClient(),
-            multi = client.multi(),
-            cacheName = `recipe${updatedRecipe._id}Data`;
+        var cacheName = `recipe${updatedRecipe._id}Data`;
 
-        multi.set(cacheName, JSON.stringify(updatedRecipe));
-        multi.expire(cacheName, (60 * 60));
-
-        multi.exec((err, results) => {
-            client.quit();
-
+        cache.add(cacheName, JSON.stringify(updatedRecipe), { expire: 60 * 60, type: 'json' }, (err, added) => {
             if (err) {
                 res.status(500).json(err);
+                return;
             }
 
-            res.json(updatedRecipe);
+            // Update the recipes list cache
+            cache.get('recipesData', (err, results) => {
+                var setRecipes;
+                
+                if (results.length) {
+                    setRecipes = JSON.parse(results[0].body).filter((recipe) => {
+                        return recipe._id !== updatedRecipe._id;
+                    });
+                    setRecipes.push(updatedRecipe);
+                } else {
+                    setRecipes = [updatedRecipe];
+                }
+
+                cache.add('recipesData', JSON.stringify(setRecipes), { expire: 60 * 60, type: 'json' }, (err, added) => {
+                    if (err) {
+                        res.status(500).send(err);
+                        return;
+                    }
+
+                    res.json(updatedRecipe);
+                });    
+            });
         });
     });
 
@@ -231,24 +273,42 @@ router.delete("/:id", authenticate, (req, res) => {
     let messageId = uuid.v4();
     let killswitchTimeoutId = undefined;
 
-    redisConnection.on(`recipe-deleted:${messageId}`, (updatedRecipe, channel) => {
+    redisConnection.on(`recipe-deleted:${messageId}`, (deletedId, channel) => {
         redisConnection.off(`recipe-deleted:${messageId}`);
         redisConnection.off(`recipe-delete-failed:${messageId}`);
 
         clearTimeout(killswitchTimeoutId);
 
         // Delete the cached recipe
-        var client = redis.createClient(),
-            cacheName = `recipe${req.params.id}Data`;
+        var cacheName = `recipe${deletedId}Data`;
 
-        client.del(cacheName, (err) => {
-            client.quit();
-
+        cache.del(cacheName, (err) => {
             if (err) {
                 res.status(500).json(err);
+                return;
             }
 
-            res.json({success: 'Recipe successfully deleted.'});
+            // Update the recipes list cache
+            cache.get('recipesData', (err, results) => {
+                var setRecipes = [];
+                
+                if (results.length) {
+                    setRecipes = JSON.parse(results[0].body).filter((recipe) => {
+                        return recipe._id !== deletedId;
+                    });
+
+                    cache.add('recipesData', JSON.stringify(setRecipes), { expire: 60 * 60, type: 'json' }, (err, added) => {
+                        if (err) {
+                            res.status(500).send(err);
+                            return;
+                        }
+
+                        res.json({success: 'Recipe successfully deleted.'});
+                    }); 
+                } else {
+                    res.json({success: 'Recipe successfully deleted.'});
+                }
+            });
         });
     });
 
