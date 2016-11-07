@@ -1,11 +1,11 @@
-##CS-554 HW2
-#Workers and APIs
+#CS-554 HW2
+##Workers and APIs
 Your assignment is to expand the lecture 5 code (Links to an external site.) by expanding the API. Your API will offload work to a worker role.
 
 You will first implement a second set of routes to support users. The routes are detailed below. You will authenticate users using token based authentication; the user token will be provided in a header titled Auth-Token: THETOKEN
 
-##Routes to add
-#User Routes
+#Routes to add
+##User Routes
 
 POST	/users	
 Posting to this route must allow for the creation of a user. Making a new user updates the location in redis that you are using to cache your list of users; whether this is a set, a hash, or a JSON string is up to you. You should also cache the entire user in redis so that they are cached by their ID.
@@ -25,7 +25,7 @@ PUTing to this route must update the current user; note, you'll have to be authe
 DELETE	/users	
 Will delete your user based on the Auth-token provided and invalidate session; If a cache entry exists for this user, it will be removed.
 
-#Recipe Routes
+##Recipe Routes
 
 POST	/recipes	
 Modify this route to add some association between the user and the recipe; you can only make recipes while logged in; the new recipe will be cached for 1 hour; the recipe list cache entry will be updated if it exists
