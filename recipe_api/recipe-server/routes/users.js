@@ -69,18 +69,23 @@ router.get('/',
 
 router.put('/', authenticate, (req, res) => {
     userData
-        .updateUser(req.user.username, req.body.newProfile)
+        .updateUser(req.user.userId, req.body.newProfile)
         .then((result) => {
             // Recache the user
-            var cacheName = 'user' + result.userId + 'Data';
+            var cacheName = `user${req.user.userId}Data`;
             var userCacheData = JSON.stringify({ 
-                id: result.userId,
-                username: req.user.username,
-                profile: result.newProfile
+                id: req.user.userId,
+                username: result.user.username,
+                profile: result.user.profile
             });
             
             // refresh the cached entry for the user
             cache.add(cacheName, userCacheData, { expire: 5 * 60, type: 'json' }, (err, added) => {
+                if (err) {
+                    res.status(500).send(err);
+                    return;
+                }
+
                 res.status(result.status).json({success: result.newProfile});
             });         
         })
@@ -91,9 +96,19 @@ router.put('/', authenticate, (req, res) => {
 
 router.delete('/', authenticate, (req, res) => {
     userData
-        .deleteUser(req.user.username)
+        .deleteUser(req.user.userId)
         .then((result) => {
-            res.status(result.status).json({success: 'User successfully deleted!'});
+            // Delete cached user
+            var cacheName = `user${req.user.userId}Data`;
+            
+            cache.del(cacheName, (err) => {
+                if (err) {
+                    res.status(500).send(err);
+                    return;
+                }
+                
+                res.status(result.status).json({success: 'User successfully deleted!'});
+            });  
         })
         .catch((err) => {
             res.status(err.status).send({error: err.error.message});

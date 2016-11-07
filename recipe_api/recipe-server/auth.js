@@ -34,7 +34,9 @@ let exportedMethods = {
 
                 client.quit();
 
-                req.user = JSON.parse(user);
+                user = JSON.parse(user);
+
+                req.user = {username: user.username, userId: userId};
 
                 next();
             });

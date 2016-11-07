@@ -193,24 +193,21 @@ let exportedMethods = {
                 
                 // Return no content status and no users found message if no users exist
                 if (!users) {
-                    return resolve({ status: 200, userData: [] });
+                    return resolve({ status: 200, userData: {} });
                 }
-
-                var userData = [];
 
                 // Otherwise parse all users into json and remove private fields before returning
                 for (let id in users) {
                     users[id] = JSON.parse(users[id]);
-
-                    userData.push({id: id, username: users[id].username, profile: users[id].profile});
+                    delete users[id].password;
                 }
                 
-                return resolve({ status: 200, userData: userData });             
+                return resolve({ status: 200, userData: users });             
             });
         });
     },
     // Updates the profile of the user associated with the given username (must be previously authenticated)
-    updateUser(username, newProfile) {
+    updateUser(userId, newProfile) {
 
         if (!ajv.validate(updateProfileSchema, newProfile)) {
             return Promise.reject({ status: 400, error: new TypeError('Invalid Arguments.') });
@@ -220,7 +217,6 @@ let exportedMethods = {
         }
 
         var client = redis.createClient();
-        var userId = sha256(username);
 
         return new Promise((resolve, reject) => {
             client.hget('users', userId, (err, user) => {
@@ -247,15 +243,14 @@ let exportedMethods = {
                         return reject({ status: 500, error: err });
                     }
 
-                    return resolve({ status: 200, userId: userId, newProfile: user.profile });
+                    return resolve({ status: 200, user: user });
                 });
             });
         });
     },
     // Deletes the user assoicated with the given username (must be previously authenticated)
-    deleteUser(username) {
+    deleteUser(userId) {
         var client = redis.createClient();
-        var userId = sha256(username);
 
         return new Promise((resolve, reject) => {     
             // Delete the user

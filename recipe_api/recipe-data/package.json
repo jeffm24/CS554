@@ -10,6 +10,7 @@
   "author": "Phil Barresi",
   "license": "MIT",
   "dependencies": {
+    "ajv": "^4.8.2",
     "bluebird": "^3.4.6",
     "mongodb": "^2.2.10"
   }
