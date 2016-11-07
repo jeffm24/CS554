@@ -14,14 +14,11 @@ function checkRecentRecipes(req, res, next) {
     client.lrange('recentRecipes', 0, 10, (err, recipes) => {
         client.quit();
 
-        console.log(recipes);
-
         if (err) {
             res.status(500).send({error: err});
             return;
         } else if (!recipes) {
             next();
-            return;
         }
 
         recipes = recipes.map((rec) => {

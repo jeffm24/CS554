@@ -107,8 +107,6 @@ let exportedMethods = {
             return Promise.reject({ status: 400, error: new TypeError('Invalid Arguments.') });
         }
 
-        console.log(newRecipeFields);
-
         var collection;
 
         return recipeCollection().then((recipes) => {
