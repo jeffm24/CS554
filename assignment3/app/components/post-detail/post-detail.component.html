@@ -1,0 +1,8 @@
+<article>
+    <small style="float:right;">{{ post.created }}</small>
+    <h2>{{ post.title }}</h2>
+    <p *ngIf="post.encodedImg !== ''"><img src="{{ post.encodedImg }}" alt="Post Image" style="max-width: 300px;" /></p>
+    <p [innerHTML]="post.body"></p>
+    
+    <p><a routerLink="/archive/0">Back to archive</a></p>
+</article>

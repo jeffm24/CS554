@@ -1,0 +1,24 @@
+<div>
+    <form #f="ngForm" (ngSubmit)="postNew(f.value, f.valid)" novalidate>
+        <h2>New Post:</h2>
+        <p>
+            <label for="title" name="title">Title</label><br/>
+            <input type="text" id="title" name="title" placeholder="Post Title" required [(ngModel)]="post.title" />
+        </p>
+        <p>
+            <label for="body" name="body">Body</label><br/>
+            <textarea rows="5" cols="20" id="body" name="body" placeholder="Post Body" required [(ngModel)]="post.body"></textarea>
+        </p>
+        <hr/>
+        <b>Preview</b>
+        <hr/>
+        <div id="preview" [innerHTML]="post.body"></div>
+        <p> 
+            <label for="image" name="image">Image</label><br/>
+            <input type="file" name="image" id="image" accept="image/*" />
+        </p>
+        <p>
+            <button type="submit">Submit</button>
+        </p>
+    </form>
+</div>

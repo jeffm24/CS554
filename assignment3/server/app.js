@@ -13,7 +13,7 @@ app.use("/public/js/node_modules", nodeModuleStatic);
 app.use("/public", generalStatic);
 app.use("/app", appStatic);
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '5mb'}));
 
 configRoutes(app);
 

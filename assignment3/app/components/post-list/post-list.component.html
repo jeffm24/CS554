@@ -1,0 +1,19 @@
+<section>
+    <h1>Posts</h1>
+
+    <p>
+        <button type="button" *ngIf="prevPage !== -1" (click)="goToPage(prevPage)">Prev Page</button>
+        <button type="button" *ngIf="nextPage !== -1" (click)="goToPage(nextPage)">Next Page</button>
+    </p>
+    
+    <hr/>
+
+    <post *ngFor="let post of postList" [post]=post></post>
+    
+    <hr/>
+    
+    <p>
+        <button type="button" *ngIf="prevPage !== -1" (click)="goToPage(prevPage)">Prev Page</button>
+        <button type="button" *ngIf="nextPage !== -1" (click)="goToPage(nextPage)">Next Page</button>
+    </p>
+</section>
